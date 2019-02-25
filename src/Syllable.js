@@ -70,6 +70,29 @@ export default () => {
       })
       syllable.scale(1, -1)
       syllable.fitBounds(paper.view.bounds.expand(-10))
+
+      const circle1 = new paper.Shape.Circle(paper.view.bounds.center, 0)
+      const group1 = new paper.Group([circle1, syllable])
+      group1.clipped = true
+      syllable.strokeColor = 'black'
+      syllable.strokeWidth = 0.5
+      syllable.fillColor = null
+
+      const syllable2 = syllable.clone()
+      syllable2.strokeColor = null
+      syllable2.fillColor = 'black'
+      const circle2 = circle1.clone()
+      const group2 = new paper.Group([circle2, syllable2])
+      group2.clipped = true
+
+      circle1.tween({ radius: WIDTH }, { duration: 500, easing: 'easeInQuad' })
+      setTimeout(() => {
+        circle2.tween(
+          { radius: WIDTH },
+          { duration: 500, easing: 'easeInQuad' }
+        )
+      }, 150)
+
       paper.view.draw()
       setDrawn(true)
     }
