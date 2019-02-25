@@ -5,7 +5,8 @@
   "description": "A hangul learning homepage",
   "main": "src/index.js",
   "scripts": {
-    "start": "beefy --cwd=public src/index.js:bundle.js"
+    "start": "beefy --cwd=public src/index.js:bundle.js",
+    "format": "prettier --write src/**/*.js public/index.html"
   },
   "devDependencies": {
     "@babel/core": "^7.3.3",
@@ -14,6 +15,7 @@
     "babelify": "^10.0.0",
     "beefy": "^2.1.8",
     "browserify": "^16.2.3",
+    "prettier": "^1.16.4",
     "watchify": "^3.11.1"
   },
   "browserify": {
