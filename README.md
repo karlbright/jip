@@ -2,3 +2,7 @@
 
 > A hangul learning homepage
 
+```
+npm install
+npm start
+```
