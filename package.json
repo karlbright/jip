@@ -30,6 +30,8 @@
     ]
   },
   "dependencies": {
+    "opentype.js": "^0.11.0",
+    "paper": "^0.12.0",
     "react": "^16.8.3",
     "react-dom": "^16.8.3"
   }
