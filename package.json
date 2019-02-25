@@ -1,0 +1,36 @@
+{
+  "name": "jip",
+  "version": "0.0.1",
+  "private": true,
+  "description": "A hangul learning homepage",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "beefy --cwd=public src/index.js:bundle.js"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.3.3",
+    "@babel/preset-env": "^7.3.1",
+    "@babel/preset-react": "^7.0.0",
+    "babelify": "^10.0.0",
+    "beefy": "^2.1.8",
+    "browserify": "^16.2.3",
+    "watchify": "^3.11.1"
+  },
+  "browserify": {
+    "transform": [
+      [
+        "babelify",
+        {
+          "presets": [
+            "@babel/preset-env",
+            "@babel/preset-react"
+          ]
+        }
+      ]
+    ]
+  },
+  "dependencies": {
+    "react": "^16.8.3",
+    "react-dom": "^16.8.3"
+  }
+}
