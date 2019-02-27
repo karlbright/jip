@@ -42,6 +42,7 @@ class Background {
 
   update() {
     this.shape.position = paper.view.center
+    this.shape.radius = Math.max(window.innerHeight, window.innerWidth)
   }
 
   in() {
@@ -56,6 +57,7 @@ class Syllable {
   constructor(font, string, cb) {
     this.string = string
     this.loading = true
+    this.size = Math.min(window.innerWidth / 3, window.innerHeight / 3, 250)
 
     opentype.load(font, (err, font) => {
       if (err) return
@@ -78,20 +80,23 @@ class Syllable {
     this.syllable = new Glyphs(this.font, this.string)
     this.syllable.fillColor = 'black'
     this.syllable.opacity = 0
-    this.syllable.fitBounds(new paper.Rectangle(paper.view.center, 200))
+    this.syllable.fitBounds(new paper.Rectangle(paper.view.center, this.size))
     this.syllable.applyMatrix = false
     this.syllable.position = paper.view.center
   }
 
   update() {
     if (this.loading) return
+    this.size = Math.min(window.innerWidth / 3, window.innerHeight / 3, 250)
     this.circle.position = paper.view.center
+    this.circle.radius = this.size
+    this.syllable.fitBounds(new paper.Rectangle(paper.view.center, this.size))
     this.syllable.position = paper.view.center
   }
 
   in() {
     this.syllable.scale(1.5).opacity = 1
-    this.circle.tween({ radius: 200 }, { duration: 400, easing: easing.easeBackOut })
+    this.circle.tween({ radius: this.size }, { duration: 400, easing: easing.easeBackOut })
     this.syllable.tween({ scaling: 1 }, { duration: 400, easing: easing.easeBackOut })
   }
 }
