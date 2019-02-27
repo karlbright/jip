@@ -6,7 +6,9 @@
   "main": "src/index.js",
   "scripts": {
     "start": "beefy --cwd=public src/index.js:bundle.js",
-    "format": "prettier --write src/**/*.js public/index.html"
+    "format": "prettier --write src/**/*.js public/index.html",
+    "build": "browserify src/index.js | google-closure-compiler -O ADVANCED -W quiet > dist/bundle.js",
+    "deploy": "npm run build && cp public/index.html dist/index.html && gh-pages -d dist"
   },
   "devDependencies": {
     "@babel/core": "^7.3.3",
@@ -14,6 +16,8 @@
     "babelify": "^10.0.0",
     "beefy": "^2.1.8",
     "browserify": "^16.2.3",
+    "gh-pages": "^2.0.1",
+    "google-closure-compiler": "^20190215.0.1",
     "prettier": "^1.16.4",
     "watchify": "^3.11.1"
   },
