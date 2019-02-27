@@ -7,7 +7,7 @@
   "scripts": {
     "start": "beefy --cwd=public src/index.js:bundle.js",
     "format": "prettier --write src/**/*.js public/index.html",
-    "build": "browserify src/index.js | google-closure-compiler -O ADVANCED -W quiet > dist/bundle.js",
+    "build": "NODE_ENV=production browserify -p tinyify src/index.js -o dist/bundle.js",
     "deploy": "npm run build && cp public/index.html dist/index.html && gh-pages -d dist"
   },
   "devDependencies": {
@@ -17,8 +17,8 @@
     "beefy": "^2.1.8",
     "browserify": "^16.2.3",
     "gh-pages": "^2.0.1",
-    "google-closure-compiler": "^20190215.0.1",
     "prettier": "^1.16.4",
+    "tinyify": "^2.5.0",
     "watchify": "^3.11.1"
   },
   "browserify": {
