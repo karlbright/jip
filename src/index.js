@@ -68,6 +68,9 @@ class Syllable {
     })
 
     this.in = this.in.bind(this)
+    this.handleMouseDown = this.handleMouseDown.bind(this)
+    this.handleMouseLeave = this.handleMouseLeave.bind(this)
+    this.handleMouseUp = this.handleMouseUp.bind(this)
   }
 
   draw() {
@@ -76,6 +79,7 @@ class Syllable {
       center: paper.view.center,
       fillColor: 'white'
     })
+    this.circle.applyMatrix = false
 
     this.syllable = new Glyphs(this.font, this.string)
     this.syllable.fillColor = 'black'
@@ -83,13 +87,29 @@ class Syllable {
     this.syllable.fitBounds(new paper.Rectangle(paper.view.center, this.size))
     this.syllable.applyMatrix = false
     this.syllable.position = paper.view.center
+
+    this.group = new paper.Group([this.circle, this.syllable])
+    this.group.applyMatrix = false
+
+    this.hitzone = new paper.Shape.Circle({
+      radius: this.size,
+      center: paper.view.center,
+      fillColor: 'red',
+      opacity: 0,
+      fullySelected: false
+    })
   }
 
   update() {
     if (this.loading) return
     this.size = Math.min(window.innerWidth / 3, window.innerHeight / 3, 250)
+
     this.circle.position = paper.view.center
     this.circle.radius = this.size
+
+    this.hitzone.position = paper.view.center
+    this.hitzone.radius = this.size
+
     this.syllable.fitBounds(new paper.Rectangle(paper.view.center, this.size))
     this.syllable.position = paper.view.center
   }
@@ -97,7 +117,45 @@ class Syllable {
   in() {
     this.syllable.scale(1.5).opacity = 1
     this.circle.tween({ radius: this.size }, { duration: 400, easing: easing.easeBackOut })
-    this.syllable.tween({ scaling: 1 }, { duration: 400, easing: easing.easeBackOut })
+    this.syllable.tween({ scaling: 1 }, { duration: 400, easing: easing.easeBackOut }).then(() => {
+      this.hitzone.onMouseDown = this.handleMouseDown
+    })
+  }
+
+  handleMouseDown(event) {
+    event.stopPropagation()
+    this.hitzone.onMouseLeave = this.handleMouseLeave
+    this.hitzone.onMouseUp = this.handleMouseUp
+    this.hitzone.onMouseDown = null
+    this.group.tween({ scaling: 0.9 }, { duration: 200, easing: easing.easeBackOut.overshoot(4) })
+  }
+
+  handleMouseUp(event) {
+    event.stopPropagation()
+    this.hitzone.onMouseDown = null
+    this.group.tween({ scaling: 1 }, { duration: 200, easing: easing.easeBackOut.overshoot(5) })
+    this.syllable
+      .tween(
+        { scaling: 1.25, rotation: [-4, 4, -5, 5, -8, 8, -10, 10][Math.floor(Math.random() * 8)] },
+        { duration: 200, easing: easing.easeBackOut.overshoot(1) }
+      )
+      .then(() => {
+        this.hitzone.onMouseDown = this.handleMouseDown
+        this.syllable.tween(
+          { scaling: 1, rotation: 0, position: this.circle.bounds.center },
+          { duration: 200, easing: easing.easeBackOut.overshoot(4) }
+        )
+      })
+  }
+
+  handleMouseLeave(event) {
+    event.stopPropagation()
+    this.hitzone.onMouseUp = null
+    this.hitzone.onMouseLeave = null
+    this.hitzone.onMouseDown = null
+    this.group.tween({ scaling: 1 }, { duration: 200, easing: easing.easeExpOut }).then(() => {
+      this.hitzone.onMouseDown = this.handleMouseDown
+    })
   }
 }
 
