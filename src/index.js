@@ -82,13 +82,11 @@ class Syllable {
     this.circle.applyMatrix = false
 
     this.syllable = new Glyphs(this.font, this.string)
-    this.syllable.fillColor = 'black'
-    this.syllable.opacity = 0
-    this.syllable.fitBounds(new paper.Rectangle(paper.view.center, this.size))
-    this.syllable.applyMatrix = false
-    this.syllable.position = paper.view.center
+    this.syllable.shape.fitBounds(new paper.Rectangle(paper.view.center, this.size))
+    this.syllable.shape.applyMatrix = false
+    this.syllable.shape.position = paper.view.center
 
-    this.group = new paper.Group([this.circle, this.syllable])
+    this.group = new paper.Group([this.circle, this.syllable.shape])
     this.group.applyMatrix = false
 
     this.hitzone = new paper.Shape.Circle({
@@ -110,14 +108,14 @@ class Syllable {
     this.hitzone.position = paper.view.center
     this.hitzone.radius = this.size
 
-    this.syllable.fitBounds(new paper.Rectangle(paper.view.center, this.size))
-    this.syllable.position = paper.view.center
+    this.syllable.shape.fitBounds(new paper.Rectangle(paper.view.center, this.size))
+    this.syllable.shape.position = paper.view.center
   }
 
   in() {
-    this.syllable.scale(1.5).opacity = 1
+    this.syllable.shape.scale(1.5).opacity = 1
     this.circle.tween({ radius: this.size }, { duration: 400, easing: easing.easeBackOut })
-    this.syllable.tween({ scaling: 1 }, { duration: 400, easing: easing.easeBackOut }).then(() => {
+    this.syllable.shape.tween({ scaling: 1 }, { duration: 400, easing: easing.easeBackOut }).then(() => {
       this.hitzone.onMouseDown = this.handleMouseDown
     })
   }
@@ -134,14 +132,14 @@ class Syllable {
     event.stopPropagation()
     this.hitzone.onMouseDown = null
     this.group.tween({ scaling: 1 }, { duration: 200, easing: easing.easeBackOut.overshoot(5) })
-    this.syllable
+    this.syllable.shape
       .tween(
         { scaling: 1.25, rotation: [-4, 4, -5, 5, -8, 8, -10, 10][Math.floor(Math.random() * 8)] },
         { duration: 200, easing: easing.easeBackOut.overshoot(1) }
       )
       .then(() => {
         this.hitzone.onMouseDown = this.handleMouseDown
-        this.syllable.tween(
+        this.syllable.shape.tween(
           { scaling: 1, rotation: 0, position: this.circle.bounds.center },
           { duration: 200, easing: easing.easeBackOut.overshoot(4) }
         )
@@ -161,9 +159,8 @@ class Syllable {
 
 class Glyphs {
   constructor(font, string) {
-    this.shape = new paper.CompoundPath()
+    this.shape = new paper.CompoundPath({ fillColor: 'black', opacity: 0 })
     font.stringToGlyphs(string).forEach(this.draw.bind(this))
-    return this.shape
   }
 
   draw(glyph) {
