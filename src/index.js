@@ -228,6 +228,7 @@ class Glyphs {
 
 document.addEventListener('DOMContentLoaded', () => {
   const canvas = document.getElementById('root')
-  const font = 'https://fonts.gstatic.com/s/blackhansans/v2/ea8Aad44WunzF9a-dL6toA8r8kqYK3M.woff'
+  // const font = 'https://fonts.gstatic.com/s/blackhansans/v2/ea8Aad44WunzF9a-dL6toA8r8kqYK3M.woff'
+  const font = 'https://fonts.gstatic.com/s/gothica1/v2/CSR44z5ZnPydRjlCCwlC6OA6RfN9.woff'
   new Application(canvas, font)
 })
