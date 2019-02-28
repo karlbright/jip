@@ -2,6 +2,9 @@ import * as opentype from 'opentype.js'
 import * as easing from 'd3-ease'
 import paper from 'paper'
 
+let index = 0
+const opts = ['나', '연', '정', '연', '모', '사', '나', '지', '효', '미', '나', '다', '현', '채', '영', '쯔', '위']
+
 class Application {
   constructor(canvas, font) {
     this.canvas = canvas
@@ -82,9 +85,7 @@ class Syllable {
     this.circle.applyMatrix = false
 
     this.syllable = new Glyphs(this.font, this.string)
-    this.syllable.shape.fitBounds(new paper.Rectangle(paper.view.center, this.size))
-    this.syllable.shape.applyMatrix = false
-    this.syllable.shape.position = paper.view.center
+    this.syllable.center(this.size)
 
     this.group = new paper.Group([this.circle, this.syllable.shape])
     this.group.applyMatrix = false
@@ -108,8 +109,7 @@ class Syllable {
     this.hitzone.position = paper.view.center
     this.hitzone.radius = this.size
 
-    this.syllable.shape.fitBounds(new paper.Rectangle(paper.view.center, this.size))
-    this.syllable.shape.position = paper.view.center
+    this.syllable.center(this.size)
   }
 
   in() {
@@ -130,6 +130,8 @@ class Syllable {
 
   handleMouseUp(event) {
     event.stopPropagation()
+    this.syllable.replace(opts[index], this.size) // TODO(karlbright): Temporary cycling
+    index = index + 1 === opts.length ? 0 : index + 1
     this.hitzone.onMouseDown = null
     this.group.tween({ scaling: 1 }, { duration: 200, easing: easing.easeBackOut.overshoot(5) })
     this.syllable.shape
@@ -159,17 +161,20 @@ class Syllable {
 
 class Glyphs {
   constructor(font, string) {
-    this.shape = new paper.CompoundPath({ fillColor: 'black', opacity: 0 })
-    font.stringToGlyphs(string).forEach(this.draw.bind(this))
+    this.font = font
+    this.config = { fillColor: 'black', opacity: 0, fullySelected: false }
+    this.shape = new paper.CompoundPath(this.config)
+    this.font.stringToGlyphs(string).forEach(glyph => this.draw(glyph, this.shape))
+    this.shape.scale(1, -1, this.shape.center)
   }
 
-  draw(glyph) {
+  draw(glyph, to) {
     let path = new paper.Path()
     glyph.path.commands.forEach(command => {
       switch (command.type) {
         case 'M':
           path = new paper.Path()
-          this.shape.addChild(path)
+          to.addChild(path)
           path.moveTo(new paper.Point(command.x, command.y))
           break
 
@@ -198,6 +203,26 @@ class Glyphs {
           break
       }
     })
+  }
+
+  center(size) {
+    if (size) this.shape.fitBounds(new paper.Rectangle(paper.view.center, size))
+    this.shape.applyMatrix = false
+    this.shape.position = paper.view.center
+  }
+
+  replace(string, size) {
+    const shape = new paper.CompoundPath({ ...this.config, opacity: 1 })
+    this.font.stringToGlyphs(string).forEach(glyph => this.draw(glyph, shape))
+    shape.fitBounds(new paper.Rectangle(paper.view.center, size))
+    shape.applyMatrix = false
+    shape.position = paper.view.center
+    shape.applyMatrix = true
+    shape.scale(1, -1)
+    shape.applyMatrix = false
+    shape.scale(1, -1, this.shape.center)
+    this.shape.replaceWith(shape)
+    this.shape = shape
   }
 }
 
