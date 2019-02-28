@@ -134,7 +134,7 @@ class Syllable {
     this.group.tween({ scaling: 1 }, { duration: 200, easing: easing.easeBackOut.overshoot(5) })
     this.syllable.shape
       .tween(
-        { scaling: 1.25, rotation: [-4, 4, -5, 5, -8, 8, -10, 10][Math.floor(Math.random() * 8)] },
+        { scaling: 1.2, rotation: [-4, 4, -5, 5, -8, 8, -10, 10][Math.floor(Math.random() * 8)] },
         { duration: 200, easing: easing.easeBackOut.overshoot(1) }
       )
       .then(() => {
